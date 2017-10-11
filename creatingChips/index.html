@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous"/>
+  <script src="https://use.fontawesome.com/51d62afe4c.js"></script>
+</head>
+
+<style type="text/css">
+  #skillDropdown {
+    z-index: 50;
+    list-style-type: none !important;
+    display: block ;
+    position: absolute !important;
+    background-color: #fff !important;
+    height: auto;
+  }
+  #skillDropdown li:hover{
+    cursor: pointer;
+    background-color: lightgrey;
+  }
+  #skillChips{
+    border: 1px solid lightgrey;
+    height: 60px;
+    border-radius: 4px;
+    margin-top: -5px !important;
+  }
+  #skill-btn{
+    border-radius: 17px;
+    margin: 3px 3px 3px 3px;
+    cursor: default;
+  }
+  .removeSkill{
+    cursor: pointer;
+  }
+  #skillSearch{
+    margin: 3px 3px 3px 3px;
+    width: 20%;
+    height: 30px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+</style>
+<body>
+<div class="form-group row">
+  <div class="col-sm-12">
+    <label for="" class="materialize-label">Skills</label>
+    <form onsubmit="addSkillThisSkill(event)">
+    <div id="skillChips" name="techSkills" class="materailize-input" onclick="selectSkill()">
+    </div>
+    </form>
+  </div>
+</div>
+<div class="form-group row">
+  <div class="col-sm-12">
+    <h3>Skill:</h3>
+    <div id="skillChoosen"></div>
+  </div>
+</div>
+</body>
+
+<script type="text/javascript">
+  
+    var skillsRequired=[];
+    function addSkillThisSkill(e){
+    e.preventDefault();
+    SkillJson.push({"name":$("#skillSearch").val()});
+    skillsRequired.push($("#skillSearch").val());
+    $("#skillChips").append("<button type='button' id='skill-btn'>"+$("#skillSearch").val()+"<i class='fa fa-times removeSkill' aria-hidden='true' style='margin-left: 4px;' name='removeSkill'></i></button>")
+
+      $("i[name='removeSkill']").unbind().click(function(){
+          skillsRequired.splice(skillsRequired.indexOf($(this).parent('button').text()),1);
+          $(this).parent('button').remove();
+        console.log(skillsRequired);
+      })
+    $("#skillDropdown").attr('style','display : none !important')
+    $("#skillChips").find('input').remove();
+    $("#skillDropdown").empty();
+    console.log(skillsRequired)
+    $("#skillField").val(skillsRequired);
+
+    $("#skillChoosen").text(skillsRequired);
+  }
+   
+  /** selected skill **/
+  function selectSkill(){
+    
+      if($("#skillChips").find('input').length==0){
+        $("#skillChips").find('span').remove()
+        $("#skillChips").append("<input type='text' id='skillSearch' class='materailize-input' placeholder='enter your skill'>")
+        $("#skillChips").append("<span><ul id='skillDropdown'></ul></span>")
+
+        $("#skillSearch").keyup(function(){
+          $("#skillDropdown").show();
+          $("#skillDropdown").empty();
+          var SkillEnter=$(this).val().toLowerCase();
+          SkillJson.forEach(function(tech){
+            var skill=tech.name.toLowerCase();
+            if(skill.includes(SkillEnter)){
+              $("#skillDropdown").append("<li value=''>"+skill+"</li>");
+            }
+          })
+          if($("#skillDropdown li").length==0){
+            $("#skillDropdown").append("<li>Add skill</li>");
+          }
+          $("#skillDropdown li").click(function(){
+            if($(this).text()=="Add skill"){
+              SkillJson.push({"name":$("#skillSearch").val()});
+              skillsRequired.push($("#skillSearch").val());
+              $("#skillChips").append("<button type='button' id='skill-btn'>"+$("#skillSearch").val()+"<i class='fa fa-times removeSkill' aria-hidden='true' style='margin-left: 4px;' name='removeSkill'></i></button>")
+
+                $("i[name='removeSkill']").unbind().click(function(){
+                    skillsRequired.splice(skillsRequired.indexOf($(this).parent('button').text()),1);
+                    $(this).parent('button').remove();
+                  console.log(skillsRequired);
+                })
+
+            }
+            else{
+              var duplicate=false;
+              var skillchoosen=$(this).text();
+              console.log(skillsRequired);
+              skillsRequired.forEach(function(skillSelected){
+                console.log("skillSelected",skillSelected);
+                console.log("skillchoosen",skillchoosen);
+                if(skillSelected==skillchoosen){
+                  duplicate=true;
+                }
+              })
+              console.log("duplicate",duplicate);
+              if(!duplicate){
+                skillsRequired.push($(this).text());
+                $("#skillChips").append("<button type='button' id='skill-btn'>"+$(this).text()+"<i class='fa fa-times removeSkill' aria-hidden='true' style='margin-left: 4px;' name='removeSkill'></i></button>")
+
+                  $("i[name='removeSkill']").unbind().click(function(){
+                      skillsRequired.splice(skillsRequired.indexOf($(this).parent('button').text()),1);
+                      $(this).parent('button').remove();
+                    console.log(skillsRequired);
+                  })
+
+              }
+            }
+
+            /*this.setState({
+              "skills":skillsRequired
+            })*/
+            $("#skillDropdown").attr('style','display : none !important')
+            $("#skillChips").find('input').remove();
+            $("#skillDropdown").empty();
+            console.log(skillsRequired)
+            $("#skillField").val(skillsRequired);
+          })
+        })
+      }
+
+    $("#skillChoosen").text(skillsRequired);
+    }
+
+
+
+var SkillJson=[
+  {
+    "name":"Java"
+  },
+  {
+    "name":"C++"
+  },
+  {
+    "name":"C"
+  },
+  {
+    "name":".NET"
+  },
+  {
+    "name":"php"
+  },
+  {
+    "name":"jQuery"
+  },
+  {
+    "name":"javaScript"
+  },
+  {
+    "name":"Python"
+  },
+  {
+    "name":"Java Core"
+  },
+  {
+    "name":"Java Advance"
+  },
+  {
+    "name":"Ruby"
+  },
+  {
+    "name":"AngularJS"
+  },
+  {
+    "name":"ReactJS"
+  },
+  {
+    "name":"HTML"
+  },
+  {
+    "name":"CSS"
+  },
+  {
+    "name":"Boostrap"
+  },
+  {
+    "name":"Materialize CSS"
+  },
+]
+</script>
+</html>
